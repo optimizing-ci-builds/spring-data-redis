@@ -5,7 +5,7 @@
 
 	<groupId>org.springframework.data</groupId>
 	<artifactId>spring-data-redis</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0-GH-2350-SNAPSHOT</version>
 
 	<name>Spring Data Redis</name>
 	<description>Spring Data module for Redis</description>
@@ -18,7 +18,7 @@
 	</parent>
 
 	<properties>
-		<springdata.keyvalue>3.0.0-SNAPSHOT</springdata.keyvalue>
+		<springdata.keyvalue>3.0.0-GH-445-SNAPSHOT</springdata.keyvalue>
 		<awaitility>4.0.2</awaitility>
 		<beanutils>1.9.4</beanutils>
 		<xstream>1.4.19</xstream>
@@ -28,6 +28,8 @@
 		<multithreadedtc>1.01</multithreadedtc>
 		<netty>4.1.72.Final</netty>
 		<java-module-name>spring.data.redis</java-module-name>
+		<spring>6.0.0-SNAPSHOT</spring>
+		<springdata.commons>3.0.0-GH-2593-SNAPSHOT</springdata.commons>
 	</properties>
 
 	<scm>
