@@ -45,3 +45,4 @@ jobs:
           column-name: 'Feedback provided'
           project-location: 'spring-projects'
           token: ${{ secrets.GH_ISSUES_TOKEN_SPRING_DATA }}
+
