@@ -2,19 +2,25 @@
 
 name: Spring Data GitHub Issues
 
-on:
-  issues:
-    types: [opened, edited, reopened]
-  issue_comment:
-    types: [created]
-  pull_request_target:
-    types: [opened, edited, reopened]
+on: [push]
 
 jobs:
   Inbox:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'spring-projects' && (github.event.action == 'opened' || github.event.action == 'reopened') && github.event.pull_request == null
     steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+          pip install numpy
+      - run: sudo apt update
+      - run: sudo apt install inotify-tools
+      - run: inotifywait -mr /home/runner/work/spring-data-redis/spring-data-redis/ --format '%T;%w;%f;%e' --timefmt %T -o /home/runner/inotify-logs.csv & echo 'optimizing-ci-builds'
+      - run: touch starting_Inbox_CreateorUpdateIssueCard_18
+      - run: rm starting_Inbox_CreateorUpdateIssueCard_18
       - name: Create or Update Issue Card
         uses: peter-evans/create-or-update-project-card@v1.1.2
         with:
@@ -22,10 +28,63 @@ jobs:
           column-name: 'Inbox'
           project-location: 'spring-projects'
           token: ${{ secrets.GH_ISSUES_TOKEN_SPRING_DATA }}
+      - run: touch starting_finished_finished_8979874
+        if: always()
+      - run: rm starting_finished_finished_8979874
+        if: always()
+      - name: rat check
+        if: always()
+        run: |
+           if [ -f /home/runner/work/spring-data-redis/spring-data-redis/target/rat.txt ]; then cat /home/runner/work/spring-data-redis/spring-data-redis/target/rat.txt; fi
+      - name: Check script file exists and execute
+        if: always()
+        run: |
+          [ -f .github/workflows/script.py ] && python .github/workflows/script.py
+          [ -f /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/job.csv ] || mkdir -p /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/; echo "${GITHUB_RUN_ID},${GITHUB_JOB},spring-data-redis,${GITHUB_WORKFLOW}" > /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/job.csv
+      - name: Checkout to destination CI-analyzes repo
+        uses: actions/checkout@v3
+        if: always()
+        with:
+          path: spring-data-redis
+          ref: '1686785308-548a464'
+          repository: 'UT-SE-Research/ci-analyzes'
+          token: '${{ secrets.API_TOKEN_GITHUB }}'
+          persist-credentials: true
+      - name: Copy files to push to another directory
+        if: always()
+        run: |
+          mkdir -p spring-data-redis/spring-data-redis/.github/workflows/project/Inbox
+          cp -rvT optimizing-ci-builds-ci-analysis spring-data-redis/spring-data-redis/.github/workflows/project/Inbox
+      - run: echo https://github.com/UT-SE-Research/ci-analyzes/tree/1686785308-548a464/spring-data-redis/.github/workflows/project/Inbox
+      - name: Pushes analysis to another repository
+        if: always()
+        working-directory: spring-data-redis
+        run: |
+          commit_message=$GITHUB_REPOSITORY@$GITHUB_WORKFLOW_SHA
+          git config --global user.name 'UT-SE-Research'
+          git config --global user.email '${{ secrets.EMAIL }}'
+          git add .
+          git commit -m $commit_message
+          while ! git push origin 1686785308-548a464; do
+            git pull --rebase origin 1686785308-548a464
+            sleep $((RANDOM % 5 + 1))
+          done
   Pull-Request:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'spring-projects' && (github.event.action == 'opened' || github.event.action == 'reopened') && github.event.pull_request != null
     steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+          pip install numpy
+      - run: sudo apt update
+      - run: sudo apt install inotify-tools
+      - run: inotifywait -mr /home/runner/work/spring-data-redis/spring-data-redis/ --format '%T;%w;%f;%e' --timefmt %T -o /home/runner/inotify-logs.csv & echo 'optimizing-ci-builds'
+      - run: touch starting_PullRequest_CreateorUpdatePullRequestCard_29
+      - run: rm starting_PullRequest_CreateorUpdatePullRequestCard_29
       - name: Create or Update Pull Request Card
         uses: peter-evans/create-or-update-project-card@v1.1.2
         with:
@@ -34,10 +93,63 @@ jobs:
           project-location: 'spring-projects'
           issue-number: ${{ github.event.pull_request.number }}
           token: ${{ secrets.GH_ISSUES_TOKEN_SPRING_DATA }}
+      - run: touch starting_finished_finished_8979874
+        if: always()
+      - run: rm starting_finished_finished_8979874
+        if: always()
+      - name: rat check
+        if: always()
+        run: |
+           if [ -f /home/runner/work/spring-data-redis/spring-data-redis/target/rat.txt ]; then cat /home/runner/work/spring-data-redis/spring-data-redis/target/rat.txt; fi
+      - name: Check script file exists and execute
+        if: always()
+        run: |
+          [ -f .github/workflows/script.py ] && python .github/workflows/script.py
+          [ -f /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/job.csv ] || mkdir -p /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/; echo "${GITHUB_RUN_ID},${GITHUB_JOB},spring-data-redis,${GITHUB_WORKFLOW}" > /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/job.csv
+      - name: Checkout to destination CI-analyzes repo
+        uses: actions/checkout@v3
+        if: always()
+        with:
+          path: spring-data-redis
+          ref: '1686785308-548a464'
+          repository: 'UT-SE-Research/ci-analyzes'
+          token: '${{ secrets.API_TOKEN_GITHUB }}'
+          persist-credentials: true
+      - name: Copy files to push to another directory
+        if: always()
+        run: |
+          mkdir -p spring-data-redis/spring-data-redis/.github/workflows/project/PullRequest
+          cp -rvT optimizing-ci-builds-ci-analysis spring-data-redis/spring-data-redis/.github/workflows/project/PullRequest
+      - run: echo https://github.com/UT-SE-Research/ci-analyzes/tree/1686785308-548a464/spring-data-redis/.github/workflows/project/PullRequest
+      - name: Pushes analysis to another repository
+        if: always()
+        working-directory: spring-data-redis
+        run: |
+          commit_message=$GITHUB_REPOSITORY@$GITHUB_WORKFLOW_SHA
+          git config --global user.name 'UT-SE-Research'
+          git config --global user.email '${{ secrets.EMAIL }}'
+          git add .
+          git commit -m $commit_message
+          while ! git push origin 1686785308-548a464; do
+            git pull --rebase origin 1686785308-548a464
+            sleep $((RANDOM % 5 + 1))
+          done
   Feedback-Provided:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'spring-projects' && github.event_name == 'issue_comment' && github.event.action == 'created' && github.actor != 'spring-projects-issues' && github.event.pull_request == null && github.event.issue.state == 'open' && contains(toJSON(github.event.issue.labels), 'waiting-for-feedback')
     steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+          pip install numpy
+      - run: sudo apt update
+      - run: sudo apt install inotify-tools
+      - run: inotifywait -mr /home/runner/work/spring-data-redis/spring-data-redis/ --format '%T;%w;%f;%e' --timefmt %T -o /home/runner/inotify-logs.csv & echo 'optimizing-ci-builds'
+      - run: touch starting_FeedbackProvided_UpdateProjectCard_41
+      - run: rm starting_FeedbackProvided_UpdateProjectCard_41
       - name: Update Project Card
         uses: peter-evans/create-or-update-project-card@v1.1.2
         with:
@@ -45,3 +157,44 @@ jobs:
           column-name: 'Feedback provided'
           project-location: 'spring-projects'
           token: ${{ secrets.GH_ISSUES_TOKEN_SPRING_DATA }}
+      - run: touch starting_finished_finished_8979874
+        if: always()
+      - run: rm starting_finished_finished_8979874
+        if: always()
+      - name: rat check
+        if: always()
+        run: |
+           if [ -f /home/runner/work/spring-data-redis/spring-data-redis/target/rat.txt ]; then cat /home/runner/work/spring-data-redis/spring-data-redis/target/rat.txt; fi
+      - name: Check script file exists and execute
+        if: always()
+        run: |
+          [ -f .github/workflows/script.py ] && python .github/workflows/script.py
+          [ -f /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/job.csv ] || mkdir -p /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/; echo "${GITHUB_RUN_ID},${GITHUB_JOB},spring-data-redis,${GITHUB_WORKFLOW}" > /home/runner/work/spring-data-redis/spring-data-redis/optimizing-ci-builds-ci-analysis/job.csv
+      - name: Checkout to destination CI-analyzes repo
+        uses: actions/checkout@v3
+        if: always()
+        with:
+          path: spring-data-redis
+          ref: '1686785308-548a464'
+          repository: 'UT-SE-Research/ci-analyzes'
+          token: '${{ secrets.API_TOKEN_GITHUB }}'
+          persist-credentials: true
+      - name: Copy files to push to another directory
+        if: always()
+        run: |
+          mkdir -p spring-data-redis/spring-data-redis/.github/workflows/project/FeedbackProvided
+          cp -rvT optimizing-ci-builds-ci-analysis spring-data-redis/spring-data-redis/.github/workflows/project/FeedbackProvided
+      - run: echo https://github.com/UT-SE-Research/ci-analyzes/tree/1686785308-548a464/spring-data-redis/.github/workflows/project/FeedbackProvided
+      - name: Pushes analysis to another repository
+        if: always()
+        working-directory: spring-data-redis
+        run: |
+          commit_message=$GITHUB_REPOSITORY@$GITHUB_WORKFLOW_SHA
+          git config --global user.name 'UT-SE-Research'
+          git config --global user.email '${{ secrets.EMAIL }}'
+          git add .
+          git commit -m $commit_message
+          while ! git push origin 1686785308-548a464; do
+            git pull --rebase origin 1686785308-548a464
+            sleep $((RANDOM % 5 + 1))
+          done
